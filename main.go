@@ -16,7 +16,7 @@ func init()  {
 func main() {
 	beego.BConfig.WebConfig.Session.SessionOn = true
 	beego.AddFuncMap("ShowPrePage",HandlePrepage)		//视图函数 上一页
-	beego.AddFuncMap("ShowNextPage",HandleNextpage)		//视图函数 上一页
+	beego.AddFuncMap("ShowNextPage",HandleNextpage)		//视图函数 下一页
 	initTemlate()
 	beego.Run()
 }

@@ -37,12 +37,18 @@ func (c *ArticleController) List() {
 		beego.Info("查询所有文章信息出错")
 		return
 	}
-	if pageCurrent < 1 {
-		pageCurrent = 1
+
+	//上下页处理
+	FirstPage := false
+	NextPage := false
+	if pageCurrent == 1 {
+		FirstPage = true
 	}
-	if pageCurrent > int(pageCount) {
-		pageCurrent = int(pageCount)
+	if pageCurrent == int(pageCount) {
+		NextPage = true
 	}
+	c.Data["FirstPage"] = FirstPage
+	c.Data["NextPage"] = NextPage
 	c.Data["pageCurrent"] = pageCurrent
 	c.Data["pageCount"] = pageCount
 	c.Data["count"] = count

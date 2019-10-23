@@ -68,7 +68,8 @@
                             <div class="layui-inline">
                                 <button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="{{.Id}}"
                                         data-url="/article/update"><i class="layui-icon">&#xe642;</i></button>
-                                <button class="layui-btn layui-btn-small layui-btn-danger del-btn go-btn" data-id="{{.Id}}"
+                                <button class="layui-btn layui-btn-small layui-btn-danger del-btn go-btn"
+                                        data-id="{{.Id}}"
                                         data-url="/article/delete"><i class="layui-icon">&#xe640;</i></button>
                             </div>
                         </td>
@@ -79,8 +80,16 @@
             <div class="page-wrap">
                 <ul class="pagination">
                     <li><a href="/article/list?pageIndex=1">首页</a></li>
-                    <li ><a href="/article/list?pageIndex={{.pageCurrent | ShowPrePage}}">上</a></li>
-                    <li ><a href="/article/list?pageIndex={{.pageCurrent | ShowNextPage}}">下</a></li>
+                    {{if compare .FirstPage true}}
+                        <li>上</li>
+                    {{else}}
+                        <li><a href="/article/list?pageIndex={{.pageCurrent | ShowPrePage}}">上</a></li>
+                    {{end}}
+                    {{if compare .NextPage true}}
+                        <li>下</li>
+                    {{else}}
+                        <li><a href="/article/list?pageIndex={{.pageCurrent | ShowNextPage}}">下</a></li>
+                    {{end}}
                     <li><a href="/article/list?pageIndex={{.pageCount}}">末页</a></li>
 
                 </ul>
