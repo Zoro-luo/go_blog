@@ -13,10 +13,10 @@
 <body>
 <div class="wrap-container clearfix">
     <div class="column-content-detail">
-        <form class="layui-form" action="">
+        <form class="layui-form" action="/article/list" method="post">
             <div class="layui-form-item">
                 <div class="layui-inline tool-btn">
-                    <button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-url="article-add.html"><i
+                    <button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-url="/article/add"><i
                                 class="layui-icon">&#xe654;</i></button>
                     <button class="layui-btn layui-btn-small layui-btn-danger delBtn" data-url="article-add.html"><i
                                 class="layui-icon">&#xe640;</i></button>
@@ -24,20 +24,23 @@
                             data-url="article-add.html"><i class="iconfont">&#xe656;</i></button>
                 </div>
                 <div class="layui-inline">
-                    <input type="text" name="title" required lay-verify="required" placeholder="请输入标题"
+                    <!--<input type="text" name="title" required lay-verify="required" placeholder="请输入标题"
+                           autocomplete="off" class="layui-input">-->
+                    <input type="text" name="title" placeholder="请输入标题"
                            autocomplete="off" class="layui-input">
                 </div>
                 <div class="layui-inline">
-                    <select name="states" lay-filter="status">
-                        <option value="">请选择一个状态</option>
-                        <option value="010">正常</option>
-                        <option value="021">停止</option>
-                        <option value="0571">删除</option>
+                    <select name="category" lay-filter="status">
+                        <option value="">请选择文章分类:</option>
+                        {{range .cates}}
+                            <option value="{{.Id}}">{{.TypeName}}</option>
+                        {{end}}
                     </select>
                 </div>
                 <button class="layui-btn layui-btn-normal" lay-submit="search">搜索</button>
             </div>
         </form>
+
         <div class="layui-form" id="table-list">
             <table class="layui-table" lay-even lay-skin="nob">
                 <thead>
@@ -58,7 +61,7 @@
                         <td class="hidden-xs">{{.Id}}</td>
                         <td>{{.Aname}}</td>
                         <td>
-                            <a href="/article/detail?id={{.Id}}"></span>文章详情</a>
+                            <a style="color: #b94a48" href="/article/detail?id={{.Id}}"></span>查看详情</a>
                         </td>
                         <td class="hidden-xs">{{.Atime.Format "2006-01-02"}}</td>
                         <td>
@@ -85,7 +88,7 @@
                     {{else}}
                         <li><a href="/article/list?pageIndex={{.pageCurrent | ShowPrePage}}">上</a></li>
                     {{end}}
-                    {{if compare .NextPage true}}
+                    {{if compare .EndPage true}}
                         <li>下</li>
                     {{else}}
                         <li><a href="/article/list?pageIndex={{.pageCurrent | ShowNextPage}}">下</a></li>

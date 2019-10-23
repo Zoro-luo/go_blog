@@ -17,8 +17,8 @@
     <form class="layui-form" action="/article/add" method="post" enctype="multipart/form-data">
         <div class="layui-tab" style="margin: 0;">
             <ul class="layui-tab-title">
-                <li><a href="article-list.html">文章列表</a></li>
-                <li class="layui-this">文章详情</li>
+                <li><a href="/article/list">文章列表</a></li>
+                <li class="layui-this">添加文章</li>
 
             </ul>
             <div class="layui-tab-content">
@@ -33,12 +33,12 @@
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-form-label">分类栏目：</label>
-                        <div class="layui-input-block">
-                            <select name="category" lay-verify="required">
-                                <option value="">请选择分类栏目</option>
-                                <optgroup label="新闻中心">
-                                    <option value="1" selected="">公司新闻</option>
-                                    <option value="2">行业新闻</option>
+                        <div class="layui-input-block ">
+                            <select name="category"  lay-filter="status">
+                                <option value="">请选择分类栏目:</option>
+                                    {{range .cates}}
+                                        <option value="{{.Id}}" selected="">{{.TypeName}}</option>
+                                    {{end}}
                                 </optgroup>
                             </select>
                         </div>

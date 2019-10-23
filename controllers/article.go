@@ -16,6 +16,19 @@ type ArticleController struct {
 
 //文章列表页
 func (c *ArticleController) List() {
+	if c.Ctx.Request.Method == "POST" {
+		cateId := c.GetString("category")
+		if cateId == "" {
+			beego.Info("下拉框传递数据失败")
+			return
+		}
+		beego.Info(cateId)
+		//o := orm.NewOrm()
+		//var artiCates []models.Article
+		//o.QueryTable("tb_article").RelatedSel("Category").Filter("Category__TypeName",cateId).All(&artiCates)
+		//beego.Info(artiCates)
+	}
+
 	o := orm.NewOrm()
 	var articles []models.Article
 	res := o.QueryTable("tb_article")
@@ -24,9 +37,8 @@ func (c *ArticleController) List() {
 	if err != nil {
 		pageCurrent = 1		//当前页
 	}
-	//_, err := res.All(&articles)
 	count, _ := res.Count()	//总条数
-	pageSize := 2		//每页显示条数
+	pageSize := 4		//每页显示条数
 	start := pageSize * (pageCurrent - 1)
 	//分页查询
 	_,err = res.Limit(pageSize, start).All(&articles)
@@ -38,17 +50,20 @@ func (c *ArticleController) List() {
 		return
 	}
 
-	//上下页处理
-	FirstPage := false
-	NextPage := false
+	FirstPage := false	//标识是否首页
+	EndPage := false	//标识是否末页
 	if pageCurrent == 1 {
 		FirstPage = true
 	}
 	if pageCurrent == int(pageCount) {
-		NextPage = true
+		EndPage = true
 	}
+	//获取分类数据
+	var cates []models.Category
+	o.QueryTable("tb_category").All(&cates)
+	c.Data["cates"] = cates
 	c.Data["FirstPage"] = FirstPage
-	c.Data["NextPage"] = NextPage
+	c.Data["EndPage"] = EndPage
 	c.Data["pageCurrent"] = pageCurrent
 	c.Data["pageCount"] = pageCount
 	c.Data["count"] = count
@@ -121,6 +136,13 @@ func (c *ArticleController) Add() {
 		//插入成功跳转到文章列表页
 		c.Redirect("/article/list", 302)
 	}
+	var cates []models.Category
+	o := orm.NewOrm()
+	_,err := o.QueryTable("tb_category").All(&cates)
+	if err != nil {
+		beego.Info("查询分类数据错误")
+	}
+	c.Data["cates"] = cates
 	c.TplName = "admin/article-add.html"
 }
 
