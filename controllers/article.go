@@ -4,7 +4,9 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"liteblog/models"
+	"math"
 	"path"
+	"strconv"
 	"time"
 )
 
@@ -16,11 +18,34 @@ type ArticleController struct {
 func (c *ArticleController) List() {
 	o := orm.NewOrm()
 	var articles []models.Article
-	_, err := o.QueryTable("tb_article").All(&articles)
+	res := o.QueryTable("tb_article")
+	pageIndex := c.GetString("pageIndex")
+	pageCurrent,err := strconv.Atoi(pageIndex)
+	if err != nil {
+		pageCurrent = 1		//当前页
+	}
+	//_, err := res.All(&articles)
+	count, _ := res.Count()	//总条数
+	pageSize := 2		//每页显示条数
+	start := pageSize * (pageCurrent - 1)
+	//分页查询
+	_,err = res.Limit(pageSize, start).All(&articles)
+	//总页数
+	pageCount := float64(count) / float64(pageSize)
+	pageCount = math.Ceil(pageCount) 	//向上取整
 	if err != nil {
 		beego.Info("查询所有文章信息出错")
 		return
 	}
+	if pageCurrent < 1 {
+		pageCurrent = 1
+	}
+	if pageCurrent > int(pageCount) {
+		pageCurrent = int(pageCount)
+	}
+	c.Data["pageCurrent"] = pageCurrent
+	c.Data["pageCount"] = pageCount
+	c.Data["count"] = count
 	c.Data["articles"] = articles
 	c.TplName = "admin/article-list.html"
 }

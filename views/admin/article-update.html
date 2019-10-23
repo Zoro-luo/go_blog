@@ -14,7 +14,8 @@
 
 <body>
 <div class="page-content-wrap">
-    <form class="layui-form" action="/article/update?id={{.article.Id}}" method="post" enctype="multipart/form-data">
+    <form class="layui-form" action="/article/update" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="id" value="{{.article.Id}}">
         <div class="layui-tab" style="margin: 0;">
             <ul class="layui-tab-title">
                 <li><a href="/article/list">文章列表</a></li>

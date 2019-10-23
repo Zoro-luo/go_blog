@@ -68,7 +68,7 @@
                             <div class="layui-inline">
                                 <button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="{{.Id}}"
                                         data-url="/article/update"><i class="layui-icon">&#xe642;</i></button>
-                                <button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="{{.Id}}"
+                                <button class="layui-btn layui-btn-small layui-btn-danger del-btn go-btn" data-id="{{.Id}}"
                                         data-url="/article/delete"><i class="layui-icon">&#xe640;</i></button>
                             </div>
                         </td>
@@ -78,15 +78,15 @@
             </table>
             <div class="page-wrap">
                 <ul class="pagination">
-                    <li class="disabled"><span>«</span></li>
-                    <li class="active"><span>1</span></li>
-                    <li>
-                        <a href="#">2</a>
-                    </li>
-                    <li>
-                        <a href="#">»</a>
-                    </li>
+                    <li><a href="/article/list?pageIndex=1">首页</a></li>
+                    <li ><a href="/article/list?pageIndex={{.pageCurrent | ShowPrePage}}">上</a></li>
+                    <li ><a href="/article/list?pageIndex={{.pageCurrent | ShowNextPage}}">下</a></li>
+                    <li><a href="/article/list?pageIndex={{.pageCount}}">末页</a></li>
+
                 </ul>
+            </div>
+            <div class="page-wrap">
+                <h3>总共{{.count}}条记录/共{{.pageCount}}页/当前第{{.pageCurrent}}页</h3>
             </div>
         </div>
     </div>

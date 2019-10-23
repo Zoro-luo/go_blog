@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/astaxie/beego"
 	_ "liteblog/routers"
+	"strconv"
 	"strings"
 	"liteblog/models"
 )
@@ -14,6 +15,8 @@ func init()  {
 
 func main() {
 	beego.BConfig.WebConfig.Session.SessionOn = true
+	beego.AddFuncMap("ShowPrePage",HandlePrepage)		//视图函数 上一页
+	beego.AddFuncMap("ShowNextPage",HandleNextpage)		//视图函数 上一页
 	initTemlate()
 	beego.Run()
 }
@@ -27,3 +30,13 @@ func initTemlate() {
 	})
 }
 
+//上一页
+func HandlePrepage(data int) string {
+	pageIndex := data - 1
+	return strconv.Itoa(pageIndex)
+}
+//下一页
+func HandleNextpage(data int) string {
+	pageIndex := data + 1
+	return strconv.Itoa(pageIndex)
+}
