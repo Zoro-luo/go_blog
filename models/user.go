@@ -6,6 +6,3 @@ type User struct {
 	Pwd  string
 }
 
-func (m *User) TableName() string {
-	return TableName("user")
-}

@@ -5,7 +5,3 @@ type Admin struct {
 	UserName string `orm:"unique"`
 	Password string
 }
-
-func (m *Admin) TableName() string {
-	return TableName("admin")
-}

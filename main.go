@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
 	_ "liteblog/routers"
 	"strconv"
 	"strings"
@@ -14,6 +15,7 @@ func init()  {
 }
 
 func main() {
+	orm.Debug = true 	//调试模式打印查询语句[上线关闭]
 	beego.BConfig.WebConfig.Session.SessionOn = true
 	beego.AddFuncMap("ShowPrePage",HandlePrepage)		//视图函数 上一页
 	beego.AddFuncMap("ShowNextPage",HandleNextpage)		//视图函数 下一页

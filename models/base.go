@@ -19,13 +19,12 @@ func Init() {
 	//设置数据库基本信息
 	orm.RegisterDataBase(`default`, "mysql", dsn)
 	//指定model映射表
-	orm.RegisterModel(new(User), new(Admin), new(Article),new(Category))
+	//orm.RegisterModel(new(User), new(Admin), new(Article),new(Category))
+	dbprefix := beego.AppConfig.String("dbprefix") //表前缀
+	orm.RegisterModelWithPrefix(dbprefix, new(User), new(Admin), new(Article), new(Category))
 	//生成表
 	//name=>default [别名] force=>false[是否强制更新表结构] verbose=>true[是否可见创建sql过程]
 	orm.RunSyncdb("default", false, true)
 }
 
-//返回带前缀的表名
-func TableName(str string) string {
-	return beego.AppConfig.String("dbprefix") + str
-}
+

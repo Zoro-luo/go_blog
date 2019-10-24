@@ -49,6 +49,7 @@
                     <th class="hidden-xs">ID</th>
                     <th>文章标题</th>
                     <th>文章内容</th>
+                    <th>文章分类</th>
                     <th class="hidden-xs">添加时间</th>
                     <th>阅读量</th>
                     <th>操作</th>
@@ -63,6 +64,7 @@
                         <td>
                             <a style="color: #b94a48" href="/article/detail?id={{.Id}}"></span>查看详情</a>
                         </td>
+                        <td class="hidden-xs">{{.Acateid}}</td>
                         <td class="hidden-xs">{{.Atime.Format "2006-01-02"}}</td>
                         <td>
                             <button class="layui-btn layui-btn-mini layui-btn-normal">{{.Acount}}</button>

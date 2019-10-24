@@ -4,6 +4,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"liteblog/models"
+	"liteblog/util"
 	"math"
 	"path"
 	"strconv"
@@ -28,30 +29,25 @@ func (c *ArticleController) List() {
 		//o.QueryTable("tb_article").RelatedSel("Category").Filter("Category__TypeName",cateId).All(&artiCates)
 		//beego.Info(artiCates)
 	}
-
 	o := orm.NewOrm()
 	var articles []models.Article
-	res := o.QueryTable("tb_article")
+	res := o.QueryTable("go_article")
 	pageIndex := c.GetString("pageIndex")
-	pageCurrent,err := strconv.Atoi(pageIndex)
+	pageCurrent, err := strconv.Atoi(pageIndex)
 	if err != nil {
-		pageCurrent = 1		//当前页
+		pageCurrent = 1 //当前页
 	}
-	count, _ := res.Count()	//总条数
-	pageSize := 4		//每页显示条数
+	count, _ := res.Count() //总条数
+	pageSize := 3           //每页显示条数
 	start := pageSize * (pageCurrent - 1)
 	//分页查询
-	_,err = res.Limit(pageSize, start).All(&articles)
+	_, err = res.Limit(pageSize, start).All(&articles)
 	//总页数
 	pageCount := float64(count) / float64(pageSize)
-	pageCount = math.Ceil(pageCount) 	//向上取整
-	if err != nil {
-		beego.Info("查询所有文章信息出错")
-		return
-	}
-
-	FirstPage := false	//标识是否首页
-	EndPage := false	//标识是否末页
+	pageCount = math.Ceil(pageCount) //向上取整
+	util.CheckErr(err,"查询所有文章信息出错")
+	FirstPage := false //标识是否首页
+	EndPage := false   //标识是否末页
 	if pageCurrent == 1 {
 		FirstPage = true
 	}
@@ -60,7 +56,7 @@ func (c *ArticleController) List() {
 	}
 	//获取分类数据
 	var cates []models.Category
-	o.QueryTable("tb_category").All(&cates)
+	o.QueryTable("go_category").All(&cates)
 	c.Data["cates"] = cates
 	c.Data["FirstPage"] = FirstPage
 	c.Data["EndPage"] = EndPage
@@ -74,27 +70,22 @@ func (c *ArticleController) List() {
 //文章详情页
 func (c *ArticleController) Detail() {
 	id, err := c.GetInt("id")
-	if err != nil {
-		beego.Info("找不到指定的文章Id", err)
-		return
-	}
+	util.CheckErr(err, "找不到指定的文章Id")
 	o := orm.NewOrm()
 	arti := models.Article{Id: id}
 	err = o.Read(&arti)
-	if err != nil {
-		beego.Info("查询失败", err)
-		return
-	}
+	util.CheckErr(err, "查询失败")
 	c.Data["article"] = arti
 	c.TplName = "admin/article-detail.html"
 }
 
 //文章添加
 func (c *ArticleController) Add() {
-	if c.Ctx.Request.Method == "POST" {
-		//post表单提交
+	if c.Ctx.Request.Method == "POST" { //post表单提交
 		articleName := c.GetString("articleName")
 		articleContent := c.GetString("articleContent")
+		articleCateId := c.GetString("articleCate")
+		beego.Info("文章分类id= ", articleCateId)
 		f, h, err := c.GetFile("articleFile")
 		defer f.Close()
 		//限定文件格式
@@ -113,7 +104,6 @@ func (c *ArticleController) Add() {
 		if err != nil {
 			beego.Info("上传文件失败", err)
 		} else {
-			//文件保存
 			beego.Info("上传文件成功")
 			c.SaveToFile("articleFile", "/static/img/"+fileName)
 		}
@@ -126,24 +116,19 @@ func (c *ArticleController) Add() {
 		arti := models.Article{}
 		arti.Aname = articleName
 		arti.Acontent = articleContent
+		arti.Acateid, _ = strconv.Atoi(articleCateId)
 		arti.Aimg = "/static/img/" + fileName
 		_, err = o.Insert(&arti)
-		if err != nil {
-			beego.Info("插入数据库错误")
-			return
-		}
-		beego.Info("插入数据成功")
-		//插入成功跳转到文章列表页
+		util.CheckErr(err, "插入数据库错误")
 		c.Redirect("/article/list", 302)
+	} else { //get提交
+		var cates []models.Category
+		o := orm.NewOrm()
+		_, err := o.QueryTable("go_category").All(&cates)
+		util.CheckErr(err, "查询分类数据错误")
+		c.Data["cates"] = cates
+		c.TplName = "admin/article-add.html"
 	}
-	var cates []models.Category
-	o := orm.NewOrm()
-	_,err := o.QueryTable("tb_category").All(&cates)
-	if err != nil {
-		beego.Info("查询分类数据错误")
-	}
-	c.Data["cates"] = cates
-	c.TplName = "admin/article-add.html"
 }
 
 //文章编辑
@@ -179,34 +164,22 @@ func (c *ArticleController) Update() {
 		arti := models.Article{Id: id}
 		//更新要先根据id先查询
 		err = o.Read(&arti)
-		if err != nil {
-			beego.Info("查询数据错误")
-			return
-		}
+		util.CheckErr(err, "查询数据错误")
 		//赋值更新操作
 		arti.Aname = articleName
 		arti.Acontent = articleContent
 		arti.Aimg = "./static/img/" + fileName
 		_, err = o.Update(&arti, "Aname", "Acontent", "Aimg")
-		if err != nil {
-			beego.Info("更新数据错误")
-			return
-		}
+		util.CheckErr(err, "更新数据错误")
 		c.Redirect("/article/list", 302)
 
 	}
 	id, err := c.GetInt("id")
-	if err != nil {
-		beego.Info("找不到指定的文章id", err)
-		return
-	}
+	util.CheckErr(err, "找不到指定的文章id")
 	o := orm.NewOrm()
 	arti := models.Article{Id: id}
 	err = o.Read(&arti)
-	if err != nil {
-		beego.Info("查询失败", err)
-		return
-	}
+	util.CheckErr(err, "查询失败")
 	c.Data["article"] = arti
 	c.TplName = "admin/article-update.html"
 }
@@ -214,21 +187,12 @@ func (c *ArticleController) Update() {
 //文章删除
 func (c *ArticleController) Delete() {
 	id, err := c.GetInt("id")
-	if err != nil {
-		beego.Info("文章ID获取失败", err)
-		return
-	}
+	util.CheckErr(err, "文章ID获取失败")
 	o := orm.NewOrm()
 	arti := models.Article{Id: id}
 	err = o.Read(&arti)
-	if err != nil {
-		beego.Info("查询错误", err)
-		return
-	}
+	util.CheckErr(err, "查询错误")
 	_, err = o.Delete(&arti)
-	if err != nil {
-		beego.Info("删除失败", err)
-		return
-	}
+	util.CheckErr(err, "删除失败")
 	c.Redirect("/article/list", 302)
 }

@@ -14,7 +14,7 @@ type CateController struct {
 func (c *CateController) List() {
 	o := orm.NewOrm()
 	var cates []models.Category
-	_, err := o.QueryTable("tb_category").All(&cates)
+	_, err := o.QueryTable("go_category").All(&cates)
 	if err != nil {
 		beego.Info("查询分类数据错误")
 	}

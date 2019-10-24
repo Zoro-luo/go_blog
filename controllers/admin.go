@@ -32,7 +32,6 @@ func (c *AdminController) Login() {
 		c.Redirect("index.html", 302)
 		//c.Ctx.WriteString("登陆成功！！")
 	}
-
 	c.TplName = "admin/login.html"
 }
 
