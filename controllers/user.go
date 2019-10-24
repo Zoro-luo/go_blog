@@ -9,7 +9,7 @@ import (
 //注册界面
 // @router /register [get]
 func (this *IndexController) Register() {
-	this.TplName = "register.html"
+	this.TplName = "home/register.html"
 }
 
 //注册操作
@@ -45,7 +45,7 @@ func (this *IndexController) ResiPost() {
 //登录界面
 // @router /login [get]
 func (this *IndexController) Login() {
-	this.TplName = "login.html"
+	this.TplName = "home/login.html"
 }
 
 //登录操作
@@ -57,7 +57,7 @@ func (this *IndexController) HandleLogin() {
 	//2 判断数据是否合法
 	if userName == "" || pwd == "" {
 		beego.Info("用户名或密码不能为空")
-		this.TplName = "login.html"
+		this.TplName = "home/login.html"
 		return
 	}
 	//3 查询数据是否正确
@@ -67,7 +67,7 @@ func (this *IndexController) HandleLogin() {
 	err := o.Read(&user, "Name")
 	if err != nil {
 		beego.Info("查询失败")
-		this.TplName = "login.html"
+		this.TplName = "home/login.html"
 		return
 	}
 	//4 成功跳转
