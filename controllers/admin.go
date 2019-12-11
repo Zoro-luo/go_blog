@@ -59,7 +59,8 @@ func (c *AdminController) Register() {
 			c.Redirect("/admin/register", 302)
 			return
 		}
-		c.Ctx.WriteString("注册成功")
+		c.Redirect("/admin/login",302)
+		//c.Ctx.WriteString("注册成功")
 	}
 	c.TplName = "admin/register.html"
 }
